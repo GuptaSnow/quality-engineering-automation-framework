@@ -1,0 +1,43 @@
+[project]
+name = "quality-engineering-automation-framework"
+version = "1.0.0"
+description = "Production-inspired Python test automation framework"
+requires-python = ">=3.11"
+
+dependencies = [
+    "pytest",
+    "requests",
+    "playwright",
+    "pytest-playwright",
+    "pytest-html",
+    "pytest-xdist",
+    "pydantic",
+    "python-dotenv"
+]
+
+[project.optional-dependencies]
+quality = [
+    "ruff",
+    "black"
+]
+
+[tool.pytest.ini_options]
+testpaths = [
+    "tests"
+]
+
+addopts = "-v --strict-markers"
+
+markers = [
+    "api: API tests",
+    "web: Web UI tests",
+    "integration: Integration tests",
+    "smoke: Smoke tests",
+    "regression: Regression tests"
+]
+
+[tool.ruff]
+line-length = 88
+
+[tool.black]
+line-length = 88
