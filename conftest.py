@@ -1,3 +1,5 @@
+import os
+
 import pytest
 
 from playwright.sync_api import (
@@ -11,6 +13,21 @@ from framework.api.client import APIClient
 from framework.api.users_api import UsersAPI
 from framework.config.settings import Settings
 from test_data.users import CREATE_USER_PAYLOAD
+
+
+# =========================
+# Pytest Reporting Hook
+# =========================
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+
+    outcome = yield
+
+    report = outcome.get_result()
+
+    if report.when == "call":
+        item.rep_call = report
 
 
 # =========================
@@ -48,15 +65,25 @@ def browser(
     playwright: Playwright,
     settings,
 ) -> Browser:
+
     return playwright.chromium.launch(
         headless=settings.HEADLESS
     )
 
 
 @pytest.fixture
-def context(browser: Browser) -> BrowserContext:
+def context(
+    browser: Browser,
+    settings,
+) -> BrowserContext:
 
-    context = browser.new_context()
+    context = browser.new_context(
+        base_url=settings.WEB_BASE_URL,
+        viewport={
+            "width": 1440,
+            "height": 900,
+        },
+    )
 
     yield context
 
@@ -66,13 +93,36 @@ def context(browser: Browser) -> BrowserContext:
 @pytest.fixture
 def page(
     context: BrowserContext,
-    settings,
+    request,
 ) -> Page:
 
     page = context.new_page()
 
-    page.goto(settings.WEB_BASE_URL)
+    # Default Playwright timeouts
+    page.set_default_timeout(10_000)
+    page.set_default_navigation_timeout(15_000)
+
+    # Navigate to the configured application
+    page.goto("/")
 
     yield page
+
+    # Capture screenshot when test fails
+    if request.node.rep_call.failed:
+
+        os.makedirs(
+            "artifacts/screenshots",
+            exist_ok=True,
+        )
+
+        screenshot_path = (
+            "artifacts/screenshots/"
+            f"{request.node.name}.png"
+        )
+
+        page.screenshot(
+            path=screenshot_path,
+            full_page=True,
+        )
 
     page.close()

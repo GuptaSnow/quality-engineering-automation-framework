@@ -33,4 +33,4 @@ def test_invalid_user_cannot_login(page):
         INVALID_USER["password"],
     )
 
-    assert login_page.error_message.is_visible()
+    assert login_page.is_error_displayed()
