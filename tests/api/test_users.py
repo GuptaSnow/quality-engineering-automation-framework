@@ -1,5 +1,7 @@
 import pytest
 
+from schemas.user_schema import User
+
 
 @pytest.mark.api
 @pytest.mark.smoke
@@ -11,9 +13,11 @@ def test_get_existing_user(users_api):
 
     body = response.json()
 
-    assert body["id"] == 1
-    assert body["name"]
-    assert body["email"]
+    user = User.model_validate(body)
+
+    assert user.id == 1
+    assert user.name
+    assert user.email
 
 
 @pytest.mark.api

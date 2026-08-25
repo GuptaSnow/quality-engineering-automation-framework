@@ -12,6 +12,7 @@ dependencies = [
     "pytest-html",
     "pytest-xdist",
     "pydantic",
+    "email-validator",
     "python-dotenv"
 ]
 
