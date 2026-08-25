@@ -31,20 +31,14 @@ def test_get_non_existing_user(users_api):
 
 @pytest.mark.api
 @pytest.mark.regression
-def test_create_user(users_api):
+def test_create_user(users_api, create_user_payload):
 
-    payload = {
-        "name": "John Doe",
-        "username": "johndoe",
-        "email": "john@example.com"
-    }
-
-    response = users_api.create_user(payload)
+    response = users_api.create_user(create_user_payload)
 
     assert response.status_code == 201
 
     body = response.json()
 
-    assert body["name"] == payload["name"]
-    assert body["username"] == payload["username"]
-    assert body["email"] == payload["email"]
+    assert body["name"] == create_user_payload["name"]
+    assert body["username"] == create_user_payload["username"]
+    assert body["email"] == create_user_payload["email"]
