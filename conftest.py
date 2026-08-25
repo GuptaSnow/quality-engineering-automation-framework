@@ -75,6 +75,7 @@ def browser(
 def context(
     browser: Browser,
     settings,
+    request,
 ) -> BrowserContext:
 
     context = browser.new_context(
@@ -85,7 +86,34 @@ def context(
         },
     )
 
+    # Start Playwright tracing
+    context.tracing.start(
+        screenshots=True,
+        snapshots=True,
+        sources=True,
+    )
+
     yield context
+
+    # Save trace only when the test fails
+    if request.node.rep_call.failed:
+
+        os.makedirs(
+            "artifacts/traces",
+            exist_ok=True,
+        )
+
+        trace_path = (
+            "artifacts/traces/"
+            f"{request.node.name}.zip"
+        )
+
+        context.tracing.stop(
+            path=trace_path
+        )
+
+    else:
+        context.tracing.stop()
 
     context.close()
 
