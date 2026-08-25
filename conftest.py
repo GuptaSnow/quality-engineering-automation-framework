@@ -1,7 +1,6 @@
 import os
 
 import pytest
-
 from playwright.sync_api import (
     Browser,
     BrowserContext,
@@ -13,7 +12,6 @@ from framework.api.client import APIClient
 from framework.api.users_api import UsersAPI
 from framework.config.settings import Settings
 from test_data.users import CREATE_USER_PAYLOAD
-
 
 # =========================
 # Pytest Reporting Hook
