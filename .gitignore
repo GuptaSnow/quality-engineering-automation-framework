@@ -38,3 +38,6 @@ htmlcov/
 
 # Python packaging
 *.egg-info/
+
+# Test artifacts
+artifacts/
