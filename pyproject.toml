@@ -21,6 +21,9 @@ quality = [
     "black"
 ]
 
+[tool.setuptools.packages.find]
+include = ["framework*"]
+
 [tool.pytest.ini_options]
 testpaths = [
     "tests"
